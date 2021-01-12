@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     @Autowired
-    OrderRepository repository;
+    private OrderRepository repository;
 
     public Order saveOrder(Order order) {
         return repository.save(order);
