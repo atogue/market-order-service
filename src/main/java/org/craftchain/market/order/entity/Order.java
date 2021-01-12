@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "ORDER_TB")
@@ -20,4 +21,5 @@ public class Order {
     private String name;
     private int quantity;
     private double price;
+    private Date date;
 }
