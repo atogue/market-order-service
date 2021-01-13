@@ -22,4 +22,5 @@ public class Order {
     private int quantity;
     private double price;
     private Date date;
+    private String status;
 }
