@@ -43,12 +43,12 @@ public class OrderService {
                 responseMessage = paymentResponse.getStatus().equals("success") ? "payment processing successful and order confirmed" : "payment failure from payment api and order added to cart";
             } else {
                 order.setStatus("in progress");
-                responseMessage = "payment failure from payment api and order added to cart";
+                responseMessage = "payment failure from payment api and order added to cart, please try again!";
             }
            response = new TransactionResponse(order, paymentResponse.getAmount(), paymentResponse.getDate(), paymentResponse.getTransactionId(), responseMessage);
         } else {
             order.setStatus("delayed");
-            responseMessage = "payment failure from payment api, please retry again!";
+            responseMessage = "payment api unavailable and order added to cart, please try again!";
             response = new TransactionResponse(order, 0, null, null, responseMessage);
         }
         return response;
