@@ -23,4 +23,5 @@ public class Order {
     private double price;
     private Date date;
     private String status;
+    private int clientId;
 }
