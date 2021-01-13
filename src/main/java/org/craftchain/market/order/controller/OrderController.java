@@ -1,6 +1,7 @@
 package org.craftchain.market.order.controller;
 
-import org.craftchain.market.order.entity.Order;
+import org.craftchain.market.order.common.TransactionRequest;
+import org.craftchain.market.order.common.TransactionResponse;
 import org.craftchain.market.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,7 @@ public class OrderController {
     private OrderService service;
 
     @PostMapping("/bookOrder")
-    public Order bookOrder(@RequestBody Order order) {
-        return  service.saveOrder(order);
+    public TransactionResponse bookOrder(@RequestBody TransactionRequest request) {
+        return  service.saveOrder(request);
     }
 }
