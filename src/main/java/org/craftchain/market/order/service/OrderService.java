@@ -27,7 +27,7 @@ public class OrderService {
         payment.setAmount(order.getPrice());
         order.setDate(Date.from(Instant.now())); // order date time
 
-        Payment paymentResponse  = template.postForObject("http://localhost:9191/payment/doPayment", payment, Payment.class);
+        Payment paymentResponse  = template.postForObject("http://PAYMENT-SERVICE/payment/doPayment", payment, Payment.class);
         TransactionResponse response;
         response = getTransactionResponse(order, paymentResponse);
         repository.save(order);
