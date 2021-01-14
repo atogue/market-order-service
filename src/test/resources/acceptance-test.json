@@ -1,0 +1,10 @@
+{
+  "order" : {
+    "id": 100,
+    "name": "basket",
+    "quantity": 1,
+    "price": 200.0,
+    "clientId": 12
+  },
+  "payment" : {}
+}
