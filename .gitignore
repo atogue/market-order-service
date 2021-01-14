@@ -7,6 +7,8 @@
 # development
 /target
 
+## Maven ##
+.mvn/
 
 ### the following references represented the default ignored by spring boot definition.
 HELP.md
