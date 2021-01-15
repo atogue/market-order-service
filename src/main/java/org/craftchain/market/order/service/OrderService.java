@@ -1,11 +1,11 @@
 package org.craftchain.market.order.service;
 
+import org.craftchain.market.order.common.Constants;
 import org.craftchain.market.order.common.Payment;
 import org.craftchain.market.order.common.TransactionRequest;
 import org.craftchain.market.order.common.TransactionResponse;
 import org.craftchain.market.order.entity.Order;
 import org.craftchain.market.order.repository.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,10 +15,12 @@ import java.util.Date;
 @Service
 public class OrderService {
 
-    @Autowired
-    private OrderRepository repository;
-    @Autowired
-    private RestTemplate template;
+    private final OrderRepository repository;
+    private final RestTemplate template;
+    public OrderService(OrderRepository repository, RestTemplate template) {
+        this.repository = repository;
+        this.template = template;
+    }
 
     public TransactionResponse saveOrder(TransactionRequest request) {
         Order order = request.getOrder();
@@ -38,16 +40,16 @@ public class OrderService {
         TransactionResponse response;
         String responseMessage;
         if (paymentResponse != null) {
-            if (paymentResponse.getStatus().equals("success")) {
-                order.setStatus("confirmed");
-                responseMessage = paymentResponse.getStatus().equals("success") ? "payment processing successful and order confirmed" : "payment failure from payment api and order added to cart";
+            if (paymentResponse.getStatus().equalsIgnoreCase(Constants.SUCCESS.name())) {
+                order.setStatus(Constants.CONFIRMED.name().toLowerCase());
+                responseMessage = "payment processing successful and order confirmed";
             } else {
-                order.setStatus("in progress");
+                order.setStatus(Constants.IN_PROGRESS.name().toLowerCase());
                 responseMessage = "payment failure from payment api and order added to cart, please try again!";
             }
            response = new TransactionResponse(order, paymentResponse.getAmount(), paymentResponse.getDate(), paymentResponse.getTransactionId(), responseMessage);
         } else {
-            order.setStatus("delayed");
+            order.setStatus(Constants.DELAYED.name().toLowerCase());
             responseMessage = "payment api unavailable and order added to cart, please try again!";
             response = new TransactionResponse(order, 0, null, null, responseMessage);
         }
