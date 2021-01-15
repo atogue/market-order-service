@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -56,4 +57,7 @@ public class OrderService {
         return response;
     }
 
+    public List<Order> findOrdersHistoryByClientId(int clientId) {
+        return repository.findAllByClientId(clientId);
+    }
 }
