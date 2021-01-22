@@ -6,6 +6,9 @@ import org.craftchain.market.order.common.TransactionRequest;
 import org.craftchain.market.order.common.TransactionResponse;
 import org.craftchain.market.order.entity.Order;
 import org.craftchain.market.order.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,11 +17,14 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@RefreshScope
 public class OrderService {
 
+    @Value("${microservice.payment-service.endpoints.endpoint.uri:http://PAYMENT-SERVICE/payment/doPayment}")
+    private String ENDPOINT_URL;
     private final OrderRepository repository;
     private final RestTemplate template;
-    public OrderService(OrderRepository repository, RestTemplate template) {
+    public OrderService(OrderRepository repository, @Lazy RestTemplate template) {
         this.repository = repository;
         this.template = template;
     }
@@ -30,7 +36,7 @@ public class OrderService {
         payment.setAmount(order.getPrice());
         order.setDate(Date.from(Instant.now())); // order date time
 
-        Payment paymentResponse  = template.postForObject("http://PAYMENT-SERVICE/payment/doPayment", payment, Payment.class);
+        Payment paymentResponse  = template.postForObject(ENDPOINT_URL, payment, Payment.class);
         TransactionResponse response;
         response = getTransactionResponse(order, paymentResponse);
         repository.save(order);
