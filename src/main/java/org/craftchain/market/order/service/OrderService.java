@@ -1,11 +1,15 @@
 package org.craftchain.market.order.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.craftchain.market.order.common.Constants;
 import org.craftchain.market.order.common.Payment;
 import org.craftchain.market.order.common.TransactionRequest;
 import org.craftchain.market.order.common.TransactionResponse;
 import org.craftchain.market.order.entity.Order;
 import org.craftchain.market.order.repository.OrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
@@ -24,19 +28,22 @@ public class OrderService {
     private String ENDPOINT_URL;
     private final OrderRepository repository;
     private final RestTemplate template;
+    private final Logger log = LoggerFactory.getLogger(OrderService.class);
     public OrderService(OrderRepository repository, @Lazy RestTemplate template) {
         this.repository = repository;
         this.template = template;
     }
 
-    public TransactionResponse saveOrder(TransactionRequest request) {
+    public TransactionResponse saveOrder(TransactionRequest request) throws JsonProcessingException {
         Order order = request.getOrder();
         Payment payment = request.getPayment();
         payment.setOrderId(order.getId());
         payment.setAmount(order.getPrice());
         order.setDate(Date.from(Instant.now())); // order date time
 
+        log.info("OrderService request: {}", new ObjectMapper().writeValueAsString(request));
         Payment paymentResponse  = template.postForObject(ENDPOINT_URL, payment, Payment.class);
+        log.info("OrderService : Payment Service response from rest template call : {}", new ObjectMapper().writeValueAsString(paymentResponse));
         TransactionResponse response;
         response = getTransactionResponse(order, paymentResponse);
         repository.save(order);
@@ -63,7 +70,9 @@ public class OrderService {
         return response;
     }
 
-    public List<Order> findOrdersHistoryByClientId(int clientId) {
-        return repository.findAllByClientId(clientId);
+    public List<Order> findOrdersHistoryByClientId(int clientId) throws JsonProcessingException {
+        var historyByClientId = repository.findAllByClientId(clientId);
+        log.info("OrderService findOrdersHistoryByClientId : {}", new ObjectMapper().writeValueAsString(historyByClientId));
+        return historyByClientId;
     }
 }

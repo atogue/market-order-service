@@ -1,5 +1,7 @@
 package org.craftchain.market.order.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
 import org.craftchain.market.order.common.TransactionRequest;
 import org.craftchain.market.order.common.TransactionResponse;
 import org.craftchain.market.order.entity.Order;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/order")
+@Slf4j
 public class OrderController {
 
     private final OrderService service;
@@ -24,11 +27,23 @@ public class OrderController {
 
     @PostMapping("/bookOrder")
     public TransactionResponse bookOrder(@RequestBody TransactionRequest request) {
-        return  service.saveOrder(request);
+        TransactionResponse response = null;
+        try {
+            response = service.saveOrder(request);
+        } catch (JsonProcessingException err) {
+            log.error("OrderService bookOrder ERROR : ", err);
+        }
+        return response;
     }
 
     @GetMapping("/{clientId}")
     public List<Order> findOrderHistoryByClientId(@PathVariable int clientId){
-        return service.findOrdersHistoryByClientId(clientId);
+        List<Order> response = null;
+        try {
+            response = service.findOrdersHistoryByClientId(clientId);
+        } catch (JsonProcessingException err) {
+            log.error("OrderService findOrderHistoryByClientId ERROR : ", err);
+        }
+        return response;
     }
 }
