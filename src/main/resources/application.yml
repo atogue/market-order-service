@@ -8,3 +8,6 @@ spring:
       enabled: true
   application:
     name: ORDER-SERVICE
+logging:
+  file:
+    name: /Users/anicet/project/hands-lab-java/archive/microservice.log
